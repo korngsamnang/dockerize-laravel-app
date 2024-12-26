@@ -1,4 +1,4 @@
-# Use the official PHP image with Nginx support
+# Use the official PHP image with FPM support
 FROM php:8.1-fpm
 
 # Install system dependencies
@@ -18,14 +18,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set working directory
 WORKDIR /var/www
 
-# Copy application dependencies first to utilize Docker's layer caching
-COPY composer.json composer.lock ./
+# Copy the entire application first
+COPY . .
+
+# Ensure the `artisan` file exists
+RUN ls -l artisan
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy the rest of the application code into the container
-COPY . .
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
@@ -34,4 +34,5 @@ RUN chown -R www-data:www-data /var/www \
 # Expose port 9000
 EXPOSE 9000
 
+# Start PHP-FPM
 CMD ["php-fpm"]
