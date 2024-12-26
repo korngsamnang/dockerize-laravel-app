@@ -21,14 +21,21 @@ WORKDIR /var/www
 # Copy application files into the container
 COPY . .
 
-# Install Laravel dependencies (will create the vendor directory)
-RUN composer install --no-dev --optimize-autoloader
+# Copy entrypoint script if you want dynamic .env generation (optional)
+# COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+# RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Set permissions for the application files
 RUN chown -R www-data:www-data /var/www
 
+# Install Laravel dependencies (will create the vendor directory)
+RUN composer install --no-dev --optimize-autoloader
+
 # Expose port 9000
 EXPOSE 9000
 
-# Start PHP-FPM and ensure the correct permissions on container start
-CMD chown -R www-data:www-data /var/www && php-fpm
+# Set the entrypoint (optional, if you use entrypoint.sh)
+# ENTRYPOINT ["entrypoint.sh"]
+
+# Start PHP-FPM
+CMD ["php-fpm"]
