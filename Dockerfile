@@ -18,11 +18,18 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set working directory
 WORKDIR /var/www
 
-# Copy the Laravel application code into the container
-COPY . .
+# Copy application dependencies first to utilize Docker's layer caching
+COPY composer.json composer.lock ./
 
 # Install Laravel dependencies
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
+
+# Copy the rest of the application code into the container
+COPY . .
+
+# Set permissions for Laravel
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Expose port 9000
 EXPOSE 9000
