@@ -23,20 +23,11 @@ COPY . .
 
 # Ensure the necessary directories exist and adjust permissions
 RUN mkdir -p storage/logs bootstrap/cache \
-    && chown -R www-data:www-data /var/www \
+    && chown -R root:root /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Install Laravel dependencies (will create the vendor directory)
 RUN composer install --no-dev --optimize-autoloader
-
-# Copy the entrypoint script into the container
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Make the entrypoint script executable
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Set entrypoint script that sets permissions and starts the application
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Expose port 9000
 EXPOSE 9000

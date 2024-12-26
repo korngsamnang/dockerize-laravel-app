@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: php
-    user: www-data # Ensures the PHP service runs as www-data
+    # Do not specify a user here to run as root by default
     volumes:
       - .:/var/www # Mount the app code
       - vendor:/var/www/vendor # Named volume for vendor
