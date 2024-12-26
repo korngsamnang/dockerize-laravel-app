@@ -7,12 +7,12 @@ services:
       dockerfile: Dockerfile
     container_name: php
     volumes:
-      - .:/var/www # Mount the app code
-      - vendor:/var/www/vendor # Named volume for vendor
-      - storage:/var/www/storage # Named volume for storage
-      - bootstrap_cache:/var/www/bootstrap/cache # Named volume for bootstrap/cache
+      - .:/var/www
+      - vendor:/var/www/vendor
     networks:
       - app-network
+    env_file:
+      - .env # Automatically loads environment variables from .env file
 
   nginx:
     image: nginx:latest
@@ -31,10 +31,10 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: laravel
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -42,9 +42,7 @@ services:
 
 volumes:
   mysql_data:
-  vendor: # Volume for vendor directory
-  storage: # Volume for storage directory
-  bootstrap_cache: # Volume for bootstrap/cache directory
+  vendor:
 
 networks:
   app-network:
