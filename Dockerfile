@@ -1,7 +1,7 @@
 # Use the official PHP image with FPM support
 FROM php:8.1-fpm
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -18,17 +18,25 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set working directory
 WORKDIR /var/www
 
-# Copy the entire application (includes composer.json and composer.lock)
+# Copy application files into the container
 COPY . .
 
-# Set necessary file permissions for Laravel
-RUN chown -R www-data:www-data /var/www
+# Ensure the necessary directories exist and adjust permissions
+RUN mkdir -p storage/logs bootstrap/cache \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Install Laravel dependencies (will create the vendor directory)
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Laravel's storage and cache directories
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Copy the entrypoint script into the container
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set entrypoint script that sets permissions and starts the application
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Expose port 9000
 EXPOSE 9000
