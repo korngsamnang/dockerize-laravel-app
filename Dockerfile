@@ -21,12 +21,14 @@ WORKDIR /var/www
 # Copy the entire application (includes composer.json and composer.lock)
 COPY . .
 
+# Set necessary file permissions for Laravel
+RUN chown -R www-data:www-data /var/www
+
 # Install Laravel dependencies (will create the vendor directory)
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions for Laravel
-RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Set permissions for Laravel's storage and cache directories
+RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Expose port 9000
 EXPOSE 9000

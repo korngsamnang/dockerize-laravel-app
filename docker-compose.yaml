@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: php
+    user: www-data # Add this line to run php service as www-data
     volumes:
       - .:/var/www # Mount the app code
       - vendor:/var/www/vendor # Use a named volume for vendor
