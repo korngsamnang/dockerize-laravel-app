@@ -18,11 +18,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Set working directory
 WORKDIR /var/www
 
-# Copy the entire application excluding vendor directory
-COPY . . 
+# Copy only the composer files (composer.json and composer.lock)
+COPY composer.json composer.lock ./
 
-# Install Laravel dependencies (this step should run during image build)
-RUN composer install --no-scripts --no-autoloader
+# Install Laravel dependencies (will create the vendor directory)
+RUN composer install --no-dev --optimize-autoloader
+
+# Copy the entire application (excluding vendor directory via .dockerignore)
+COPY . .
 
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \

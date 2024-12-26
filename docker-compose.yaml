@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: php
     volumes:
-      - .:/var/www
+      - .:/var/www # Mount the app code
+      - vendor:/var/www/vendor # Use a named volume for vendor
     networks:
       - app-network
 
@@ -39,6 +40,7 @@ services:
 
 volumes:
   mysql_data:
+  vendor: # Define a volume for the vendor directory
 
 networks:
   app-network:
