@@ -21,10 +21,8 @@ WORKDIR /var/www
 # Copy application files into the container
 COPY . .
 
-# Ensure the necessary directories exist and adjust permissions
-RUN mkdir -p storage/logs bootstrap/cache \
-    && chown -R root:root /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Set permissions for the application files
+RUN chown -R www-data:www-data /var/www
 
 # Install Laravel dependencies (will create the vendor directory)
 RUN composer install --no-dev --optimize-autoloader
