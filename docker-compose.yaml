@@ -6,7 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: php
-    # Do not specify a user here to run as root by default
     volumes:
       - .:/var/www # Mount the app code
       - vendor:/var/www/vendor # Named volume for vendor
